@@ -43,7 +43,6 @@ char* gerar_operacao() {
 char* gerar_string_operacao() {
     char* operacao = gerar_operacao();
     int num1 = gerar_numero_aleatorio();
-    
     int num2 = gerar_numero_aleatorio();
     char* resultado = malloc(sizeof(char) * 20);
     sprintf(resultado, "%s %d %d", operacao, num1, num2);
