@@ -24,6 +24,7 @@ void adicionar_elemento(No** cabeca, client_data* data) {
     No* novo_no = (No*) malloc(sizeof(No));
     novo_no->data = data;
     novo_no->data->estado=OCIOSO;
+    pthread_mutex_init(&novo_no->data->mutex, NULL);
     novo_no->proximo = *cabeca;
     *cabeca = novo_no;
 }
@@ -52,6 +53,7 @@ void destruir_lista(No** lista) {
     No* prox;
     while (atual != NULL) {
         prox = atual->proximo;
+        pthread_mutex_destroy(&atual->data->mutex);
         free(atual->data);
         free(atual);
         atual = prox;
@@ -77,11 +79,17 @@ No* busca_worker(No* cabeca){
     }
     No* atual = cabeca;
     while (atual != NULL) {
-        if (atual->data->estado == OCIOSO){
+        if(pthread_mutex_trylock(&atual->data->mutex)==0){
             return atual;
-        } else {
+        }else{
             atual = atual->proximo;
-        } 
+        }
+
+        // if (atual->data->estado == OCIOSO){
+        //     return atual;
+        // } else {
+        //     atual = atual->proximo;
+        // } 
     }
     return NULL;
 }

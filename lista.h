@@ -8,6 +8,7 @@ typedef struct client_data {
     int sk;
     struct sockaddr_in *client_addr;
     enum Estado { OCIOSO, TRABALHANDO } estado;
+    pthread_mutex_t mutex;
 }client_data;
 
 typedef struct No {

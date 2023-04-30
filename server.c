@@ -74,7 +74,7 @@ void * client_handle(void* cd){
            adicionar_elemento(&lista,client);
         pthread_mutex_unlock(&m);
 
-        printf("Worker %s:%d adicionado a lista!\n", inet_ntoa(client->client_addr->sin_addr), ntohs(client->client_addr->sin_port));
+        // printf("Worker %s:%d adicionado a lista!\n", inet_ntoa(client->client_addr->sin_addr), ntohs(client->client_addr->sin_port));
         print_lista(lista);
     }
 
@@ -82,7 +82,7 @@ void * client_handle(void* cd){
     else if (strcmp(buffer, "client") == 0){
         No* myWorker = busca_worker(lista);
         if(myWorker==NULL){
-            printf("Não há workers disponíveis!\n");
+            // printf("Não há workers disponíveis!\n");
             snprintf(buffer, sizeof(buffer), "%s","SISTEMA OCUPADO! Tente mais tarde.");  
             send(client->sk, buffer, strlen(buffer)+1, 0);
         }else{
@@ -94,7 +94,7 @@ void * client_handle(void* cd){
             //coloca o worker para porcessar a solicitação
             myWorker->data->estado=TRABALHANDO;
             send(myWorker->data->sk, buffer, strlen(buffer)+1, 0);
-            printf("Worker %s:%d (%d) trabalhando para o cliente %s:%d\n", inet_ntoa(myWorker->data->client_addr->sin_addr), ntohs(myWorker->data->client_addr->sin_port),myWorker->data->estado,inet_ntoa(client->client_addr->sin_addr), ntohs(client->client_addr->sin_port));   
+            // printf("Worker %s:%d (%d) trabalhando para o cliente %s:%d\n", inet_ntoa(myWorker->data->client_addr->sin_addr), ntohs(myWorker->data->client_addr->sin_port),myWorker->data->estado,inet_ntoa(client->client_addr->sin_addr), ntohs(client->client_addr->sin_port));   
 
              //aguarda a resposta do worker e libera-o para outro trabalho:
             if (recv_msg(myWorker->data->sk, buffer) < 0) {
@@ -102,7 +102,8 @@ void * client_handle(void* cd){
                 exit(EXIT_FAILURE);
             }
             myWorker->data->estado=OCIOSO;
-            printf("resposta do worker: %s\n",buffer);
+            pthread_mutex_unlock(&myWorker->data->mutex);
+            // printf("resposta do worker: %s\n",buffer);
             send(client->sk, buffer, strlen(buffer)+1, 0);
 
             /* Fecha conexão com o cliente. */
@@ -113,8 +114,8 @@ void * client_handle(void* cd){
     }else{
         printf("Identificação inválida: %s\n",buffer);
     }
-    //print_lista(lista);
-    //fflush(stdout);
+    print_lista(lista);
+    fflush(stdout);
     return NULL;
 }
 
