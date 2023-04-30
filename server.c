@@ -86,13 +86,17 @@ void * client_handle(void* cd){
             snprintf(buffer, sizeof(buffer), "%s","SISTEMA OCUPADO! Tente mais tarde.");  
             send(client->sk, buffer, strlen(buffer)+1, 0);
         }else{
+            //coloca o worker para porcessar a solicitação
+            pthread_mutex_lock(&m);
+                myWorker->data->estado=TRABALHANDO;
+            pthread_mutex_unlock(&m);
+
             //recebe a solicitação do client
             if (recv_msg(client->sk, buffer) < 0) {
                 perror("Error receiving request");
                 exit(EXIT_FAILURE);
             }
-            //coloca o worker para porcessar a solicitação
-            myWorker->data->estado=TRABALHANDO;
+            
             send(myWorker->data->sk, buffer, strlen(buffer)+1, 0);
             printf("Worker %s:%d (%d) trabalhando para o cliente %s:%d\n", inet_ntoa(myWorker->data->client_addr->sin_addr), ntohs(myWorker->data->client_addr->sin_port),myWorker->data->estado,inet_ntoa(client->client_addr->sin_addr), ntohs(client->client_addr->sin_port));   
 
