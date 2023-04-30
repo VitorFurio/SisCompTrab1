@@ -32,7 +32,7 @@ int recv_msg(int sk, char* b){
 }
 
 double perform_operation(const char *operation, double a, double b) {
-     sleep(2);
+      sleep(1);
     if (strcmp(operation, "add") == 0) {
         return a + b;
     } else if (strcmp(operation, "subtract") == 0) {
