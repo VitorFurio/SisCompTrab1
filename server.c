@@ -23,16 +23,18 @@ pthread_mutex_t m = PTHREAD_MUTEX_INITIALIZER; //mutex para controle de escrita 
 void exit_handler(int);
 
 void exit_handler(int sig) {
-    //TODO: Implementar desligamento do server.
-    // char exit_message[1024];
-    // memset(exit_message, 0, sizeof(exit_message));
-    // snprintf(exit_message, sizeof(exit_message), "%s", "quit");
-
-    // for(int i = 0; i < workers_count; i++){
-    //     send(workers[i].data.socket_id, exit_message, sizeof(exit_message) + 1, 0);
-    // }
-    // sleep(2);
-    printf("\nSever desligando...\n");
+    printf("\n Desligando...");
+    // fecha todas as conexões
+    char buffer[BUFFER_SIZE];
+    snprintf(buffer, BUFFER_SIZE, "quit");
+    for (No* n = lista; n != NULL; n = n->proximo) {
+        send(n->data->sk, buffer, strlen(buffer)+1, 0);
+        close(n->data->sk);
+    }
+    //libera a memoria da lista
+    destruir_lista(&lista);
+    pthread_mutex_destroy(&m);
+    printf("\nServidor desligado!\n");
     fflush(stdout);
     exit(1);
 }

@@ -47,6 +47,19 @@ void remover_elemento(No** cabeca, client_data* data) {
     }
 }
 
+void destruir_lista(No** lista) {
+    No* atual = *lista;
+    No* prox;
+    while (atual != NULL) {
+        prox = atual->proximo;
+        free(atual->data);
+        free(atual);
+        atual = prox;
+    }
+    *lista = NULL;
+}
+
+
 void print_lista(No* cabeca) {
     No* atual = cabeca;
     printf("      Lista de workes:\n");

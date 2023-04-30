@@ -19,6 +19,7 @@ typedef struct No {
 No* criar_lista();
 void adicionar_elemento(No** cabeca, client_data* valor);
 void remover_elemento(No** cabeca, client_data* valor);
+void destruir_lista(No** lista);
 void print_lista(No* cabeca);
 No* busca_worker(No* cabeca);
 #endif
